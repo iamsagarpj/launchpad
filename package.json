@@ -1,0 +1,18 @@
+{
+  "name": "launchpad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local dashboard for multi-service projects, backed by the Tilt CLI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test --test-concurrency=1 test/"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.600.0",
+    "@aws-sdk/credential-providers": "^3.600.0",
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+public-build-preview/
+public/
+data/*
+!data/*.example.json
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+.superpowers/
+.DS_Store

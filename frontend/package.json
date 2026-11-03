@@ -1,0 +1,24 @@
+{
+  "name": "my-dashboard-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "node --test src/*.test.js src/json-viewer/*.test.js src/base64/*.test.js src/uuid/*.test.js src/tools/*.test.js src/url-encoder/*.test.js src/jwt/*.test.js src/timestamp/*.test.js src/hash/*.test.js src/curl-cleaner/*.test.js src/regex/*.test.js src/text-diff/*.test.js src/xml/*.test.js src/yaml/*.test.js src/api-client/*.test.js src/env-file/*.test.js src/log-viewer/*.test.js src/openapi/*.test.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "@monaco-editor/react": "^4.7.0",
+    "monaco-editor": "^0.57.0",
+    "jsonc-parser": "^3.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.8",
+    "vite-plugin-monaco-editor": "^1.1.0"
+  }
+}

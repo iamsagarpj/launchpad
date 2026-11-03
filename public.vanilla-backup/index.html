@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sagar's Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="monogram">S</div>
+      <h1>Sagar's Dashboard</h1>
+    </div>
+    <a class="tilt-link" href="http://localhost:10350" target="_blank" rel="noopener">Open native Tilt UI ↗</a>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="section-header">
+        <h2>Services</h2>
+        <div class="section-actions">
+          <button id="start-all">Start All</button>
+          <button id="stop-all">Stop All</button>
+        </div>
+      </div>
+      <div id="services-list" class="resource-list"></div>
+
+      <div class="section-header">
+        <h2>Infrastructure</h2>
+      </div>
+      <div id="infra-list" class="resource-list"></div>
+    </aside>
+
+    <section class="detail-panel">
+      <div id="detail-placeholder" class="detail-placeholder">Select a service to view logs</div>
+      <div id="detail-content" class="detail-content" hidden>
+        <div class="detail-header">
+          <div class="detail-header-top">
+            <span id="detail-name" class="detail-name"></span>
+            <div id="detail-status-pill" class="status-pill"></div>
+          </div>
+          <div id="detail-tags" class="card-tags"></div>
+          <div id="detail-links" class="card-links"></div>
+        </div>
+        <pre id="log-panel-body"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

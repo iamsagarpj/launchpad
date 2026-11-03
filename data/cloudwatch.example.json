@@ -1,0 +1,9 @@
+{
+  "region": "us-east-1",
+  "environments": {
+    "dev": { "label": "Dev", "profile": "default" }
+  },
+  "logGroups": {
+    "api": "/aws/ecs/api"
+  }
+}
