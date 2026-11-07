@@ -176,6 +176,120 @@ test('detectService reports no command for an empty folder', () => {
   fs.mkdirSync(app);
   const found = detectService(app, root);
   assert.equal(found.command, null);
+  assert.equal(found.fromReadme, undefined);
+});
+
+test('detectService suggests python -m uvicorn and uvicorn for a FastAPI app', () => {
+  const root = tempDir();
+  const app = path.join(root, 'backend');
+  fs.mkdirSync(path.join(app, 'app'), { recursive: true });
+  fs.writeFileSync(path.join(app, 'requirements.txt'), 'fastapi\nuvicorn\n');
+  fs.writeFileSync(
+    path.join(app, 'app', 'main.py'),
+    'from fastapi import FastAPI\napp = FastAPI()\n# uvicorn app.main:app --reload --port 8010\n'
+  );
+
+  const found = detectService(app, root);
+  assert.equal(found.framework, 'fastapi');
+  assert.equal(found.port, 8010);
+  assert.equal(found.command, 'python -m uvicorn app.main:app --reload --port 8010');
+  assert.deepEqual(
+    found.suggestions.map((item) => item.command),
+    [
+      'python -m uvicorn app.main:app --reload --port 8010',
+      'python3 -m uvicorn app.main:app --reload --port 8010',
+      'uvicorn app.main:app --reload --port 8010',
+    ]
+  );
+});
+
+test('detectService keeps the detected command and adds the other starter', () => {
+  const root = tempDir();
+  const app = path.join(root, 'worker');
+  fs.mkdirSync(app);
+  fs.writeFileSync(path.join(app, 'go.mod'), 'module example.com/worker\n\ngo 1.22\n');
+
+  const found = detectService(app, root);
+  assert.equal(found.command, 'go run .');
+  assert.deepEqual(
+    found.suggestions.map((item) => item.label),
+    ['go run .', 'go run ./...']
+  );
+});
+
+test('detectService lets a launchpad block in README.md override detection', () => {
+  const root = tempDir();
+  const app = path.join(root, 'shop');
+  fs.mkdirSync(app);
+  fs.writeFileSync(
+    path.join(app, 'package.json'),
+    JSON.stringify({ scripts: { dev: 'vite' }, devDependencies: { vite: '5.0.0' } })
+  );
+  fs.writeFileSync(
+    path.join(app, 'README.md'),
+    [
+      '# Shop',
+      '',
+      '```launchpad',
+      'name: shop-api',
+      'command: npm start',
+      'port: 4010',
+      'section: backend',
+      'stack: express',
+      'needsAws: true',
+      '```',
+      '',
+    ].join('\n')
+  );
+
+  const found = detectService(app, root);
+  assert.equal(found.fromReadme, true);
+  assert.equal(found.name, 'shop-api');
+  assert.equal(found.command, 'npm start');
+  assert.equal(found.port, 4010);
+  assert.equal(found.section, 'backend');
+  assert.equal(found.framework, 'express');
+  assert.equal(found.needsAws, true);
+  assert.equal(found.services, undefined);
+});
+
+test('detectService reads every service listed in the README block', () => {
+  const root = tempDir();
+  const app = path.join(root, 'suite');
+  const api = path.join(app, 'api');
+  const web = path.join(app, 'web');
+  fs.mkdirSync(api, { recursive: true });
+  fs.mkdirSync(web);
+  fs.writeFileSync(path.join(api, 'go.mod'), 'module example.com/api\n\ngo 1.22\n');
+  fs.writeFileSync(
+    path.join(app, 'Readme.md'),
+    [
+      '```launchpad',
+      'name: api',
+      'path: api',
+      'port: 8088',
+      '',
+      'name: web',
+      'path: web',
+      'command: npm run dev',
+      'port: 5173',
+      'section: frontend',
+      'stack: vite',
+      '```',
+      '',
+    ].join('\n')
+  );
+
+  const found = detectService(app, root);
+  assert.equal(found.services.length, 2);
+  assert.equal(found.services[0].name, 'api');
+  assert.equal(found.services[0].command, 'go run .');
+  assert.equal(found.services[0].port, 8088);
+  assert.equal(found.services[0].path, fs.realpathSync(api));
+  assert.equal(found.services[1].name, 'web');
+  assert.equal(found.services[1].command, 'npm run dev');
+  assert.equal(found.services[1].section, 'frontend');
+  assert.equal(found.services[1].framework, 'vite');
 });
 
 test('renderUserTiltfile leaves AWS out unless the service asks for it', () => {

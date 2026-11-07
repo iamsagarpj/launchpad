@@ -12,6 +12,7 @@ const { openServiceStore } = require('./lib/serviceStore');
 const { detectService } = require('./lib/detectService');
 const { chooseFolder } = require('./lib/chooseFolder');
 const { publishUserServices, triggerTiltfileReload } = require('./lib/publishUserServices');
+const { preparePythonService } = require('./lib/pythonEnv');
 
 const PORT = 4040;
 const workspaceRoot = path.join(__dirname, '..');
@@ -126,21 +127,23 @@ app.post('/api/services/pick', async (req, res) => {
   }
 });
 
-app.post('/api/services', (req, res) => {
+app.post('/api/services', async (req, res) => {
   try {
-    const service = serviceStore.create(req.body || {}, workspaceRoot);
+    const prepared = await preparePythonService(req.body || {}, workspaceRoot);
+    const service = serviceStore.create(prepared.service, workspaceRoot);
     publishRegisteredServices();
-    res.status(201).json({ service });
+    res.status(201).json({ service, pythonEnv: prepared.pythonEnv });
   } catch (err) {
     sendServiceError(res, err);
   }
 });
 
-app.put('/api/services/:name', (req, res) => {
+app.put('/api/services/:name', async (req, res) => {
   try {
-    const service = serviceStore.update(req.params.name, req.body || {}, workspaceRoot);
+    const prepared = await preparePythonService(Object.assign({}, req.body, { name: req.params.name }), workspaceRoot);
+    const service = serviceStore.update(req.params.name, prepared.service, workspaceRoot);
     publishRegisteredServices();
-    res.json({ service });
+    res.json({ service, pythonEnv: prepared.pythonEnv });
   } catch (err) {
     sendServiceError(res, err);
   }

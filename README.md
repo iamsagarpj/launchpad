@@ -47,6 +47,49 @@ From the GitHub page you can also use **Code**, then **Download ZIP**, and run t
 
 Start All starts services marked frontend or backend. A saved service can be edited later from the same dialog. If the folder has no recognizable project file, the path is kept and you type the start command yourself.
 
+To set the values yourself, add a fenced block tagged `launchpad` to the `README.md` in the folder you select. Launchpad uses those lines instead of guessing. Leave a key out and the project files still fill that one field.
+
+```text
+name: shop-api
+command: npm start
+port: 4010
+section: backend
+stack: express
+needsAws: false
+```
+
+Open the block with three backticks and the word `launchpad`, then close it with three backticks. One key per line.
+
+| Key | What it sets |
+|---|---|
+| `name` | Short service name. The folder name is used when this is empty. |
+| `command` | Start command. Detection is used when this is empty. |
+| `port` | Port the process listens on. |
+| `section` | `backend` or `frontend`. |
+| `stack` | Label such as `vite`, `django`, or `go`. |
+| `needsAws` | `true` or `false`. Waits for an `aws-creds` check only when true. |
+| `path` | Folder inside the repo. Use this when one README describes more than one app. |
+
+A blank line starts another service. `path` is relative to the folder you select, and that folder has to exist.
+
+```text
+name: api
+path: api
+command: go run .
+port: 8088
+section: backend
+stack: go
+
+name: web
+path: web
+command: npm run dev
+port: 5173
+section: frontend
+stack: vite
+```
+
+Register repo then offers **Register all from README**, which saves each of those services. A path outside the selected folder is ignored.
+
 Choosing a folder looks for the usual project file:
 
 | Project file | Stack | Start command |
