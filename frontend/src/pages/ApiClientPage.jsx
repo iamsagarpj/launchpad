@@ -95,7 +95,7 @@ const BODY_TYPES = [
   { id: 'none', label: 'None' },
   { id: 'json', label: 'JSON' },
   { id: 'text', label: 'Text' },
-  { id: 'form', label: 'Form' },
+  { id: 'form', label: 'x-www-form-urlencoded' },
   { id: 'multipart', label: 'Multipart' },
   { id: 'graphql', label: 'GraphQL' },
 ];
